@@ -1,17 +1,29 @@
 import CommentsList from "./CommentsList"
 import { fetchCommentsData } from "../api/api"
-import {useEffect,useContext} from 'react'
-import { QuotesContext } from "../useContext/context"
-
+import {useEffect,useCallback,Fragment,useState} from 'react'
+import useHttp from "../useHook/useHttp"
+import LoadingSpinner from "../UI/LoadingSpinner"
 
 const Comments =(props)=>{
+    const {sendRequest,data,error,status} =useHttp(fetchCommentsData)
     
-    const addComments = useContext(QuotesContext).addComments
+    const {quoteId} =props
     useEffect(()=>{
-        fetchCommentsData(props.quoteId).then(value=>addComments(value))
-    },[])
+            sendRequest(quoteId)
+    },[sendRequest,quoteId])
+
+    const addedCommentHandler =useCallback(()=>{
+        sendRequest(quoteId)
+    },[sendRequest,quoteId])
+  
+
+
+
+    
     return(
-    <CommentsList quoteId={props.quoteId}/>
+      <Fragment>
+    <CommentsList quoteId={props.quoteId} comments={data} addedComment={addedCommentHandler} status={status} />
+    </Fragment>
     )
 }
 

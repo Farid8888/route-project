@@ -1,30 +1,45 @@
 import classes from './Fullscreen.module.css'
 import { QuotesContext } from '../useContext/context'
-import {useContext,useEffect,Fragment} from 'react'
+import {useEffect,Fragment,useState} from 'react'
 import { getFilteredQuotes } from '../api/api'
-import {useParams,Route,useRouteMatch,Link} from 'react-router-dom'
+import {useParams,Route,useRouteMatch,Link,useHistory} from 'react-router-dom'
 import Comments from '../comments/Comments'
-import {useHistory} from 'react-router'
-
+import useHttp from '../useHook/useHttp'
+import LoadingSpinner from '../UI/LoadingSpinner'
 
 const Fullscreen = (props)=>{
+    const {sendRequest,error,data,status} =useHttp(getFilteredQuotes)
     const params =useParams()
     const match = useRouteMatch()
-    const {quoteId} = params
     const history = useHistory()
-    const filteredQuote = useContext(QuotesContext).filteredQuote
-    const addFiltered = useContext(QuotesContext).addFilteredQuote
+    const {quoteId} = params
     useEffect(()=>{
-            getFilteredQuotes(quoteId).then(value=>addFiltered(value))
-    },[quoteId])
+            sendRequest(quoteId)
+    },[sendRequest])
     console.log(quoteId)
-    
-    
+    console.log(data)
+    console.log(match)
+    if(status === 'pending'){
+     return <div className={classes.loading}>
+         <LoadingSpinner/>
+     </div>
+    }
+
+    if(status === 'error'){
+        return <div className={classes.error}>
+            {error}
+        </div>
+    }
+    if(!data.text){
+     return <div>No quotes found</div>
+    }
+    console.log(data)
+    console.log(status)
     return(
         <Fragment>
             <div className={classes.fullScreen}> 
-            <h3>{filteredQuote.text}</h3>
-            <p>{filteredQuote.author}</p>
+            <h3>{data.text}</h3>
+            <p>{data.author}</p>
             </div>
             <Route path={`${match.url}`} exact>
             <Link to={`${match.url}/comments`}>

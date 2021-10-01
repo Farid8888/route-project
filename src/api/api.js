@@ -23,7 +23,6 @@ export const fetchQuotesData =async()=>{
 }
 
 export const sendQuotesData =async(quotes)=>{
-  const sendRequest =async()=>{
 const response = await fetch('https://quotes-fd6ed-default-rtdb.firebaseio.com/quotes.json',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
@@ -32,15 +31,11 @@ const response = await fetch('https://quotes-fd6ed-default-rtdb.firebaseio.com/q
         text:quotes.text
     })
 })
+const responseData = await response.json()
 if(!response.ok){
     throw new Error('Sending failed')
 }
-  }
-  try{
-    await sendRequest()
-  }catch(error){
-   alert('Failed')
-  }
+
 }
 
 const FIREBASE_DOMAIN = 'https://quotes-fd6ed-default-rtdb.firebaseio.com'
@@ -74,8 +69,6 @@ export const fetchCommentsData =async(quoteId)=>{
     }
 
     export const sendCommentsData =async(cmt)=>{
-        const sendRequest =async()=>{
-
       const response = await fetch(`${FIREBASE_DOMAIN}/comments/${cmt.quoteId}.json`,{
           method:'POST',
           headers:{'Content-Type':'application/json'},
@@ -86,10 +79,4 @@ export const fetchCommentsData =async(quoteId)=>{
       if(!response.ok){
           throw new Error('Sending failed')
       }
-        }
-        try{
-          await sendRequest()
-        }catch(error){
-         alert('Failed')
-        }
       }

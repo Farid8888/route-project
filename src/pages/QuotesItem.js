@@ -1,15 +1,13 @@
 import classes from './QuotesItem.module.css'
-import { Fragment,useState,useContext } from 'react'
+import { Fragment} from 'react'
 import {Link} from 'react-router-dom'
 import {useHistory} from 'react-router'
-import { QuotesContext } from '../useContext/context'
+
 
 
 const QuotesItem =(props)=>{
-    const filteredQuote = useContext(QuotesContext).filteredQuote
     const history = useHistory()
     const currentLink = history.location.pathname
-console.log(filteredQuote)
     return(
         <Fragment>   
            <ul className={classes.quotesitem}>

@@ -1,33 +1,52 @@
 import classes from './NewQuote.module.css'
 import Card from '../UI/Card'
-import React,{useContext,useRef} from 'react'
+import React,{useRef,useEffect,useState} from 'react'
 import {useHistory} from 'react-router'
-import { sendQuotesData,fetchQuotesData } from '../api/api' 
-import { QuotesContext } from '../useContext/context' 
-import { useEffect } from 'react'
+import { sendQuotesData} from '../api/api' 
+import useHttp from '../useHook/useHttp'
+import LoadingSpinner from '../UI/LoadingSpinner'
+import PromtQuotes from './PromtQuotes'
 
-const NewQuote =React.memo(()=>{
-  const concatQuotes = useContext(QuotesContext).concatQuotes
-  const changeCheck = useContext(QuotesContext).changeCheck
+const NewQuote =()=>{
+    const {sendRequest,data,error,status} =useHttp(sendQuotesData)
   const textInputRef = useRef()
   const authorInputRef = useRef()
 const history =useHistory()
-
+const [isEntering,setIsEntering] = useState(false)
+const onFocusHandler =()=>{
+    setIsEntering(true)
+}
+console.log(isEntering)
+console.log('sd')
     const onSubmitHandler =(event)=>{
      event.preventDefault()
-     const data={
+     const sendData={
         text:textInputRef.current.value,
         author:authorInputRef.current.value
     }
-     sendQuotesData(data)
-    //   concatQuotes(data)
-    changeCheck()
-     history.push('/quotes')
+     sendRequest(sendData)
     }
-    
+
+    useEffect(()=>{
+        if(status==='success'){
+            history.push('/quotes')
+        }
+    },[history,status])
+    if(status === 'pending'){
+        return <div className={classes.loading}>
+            <LoadingSpinner/>
+        </div>
+    }
+
+    if(status === 'error'){
+      return <div className={classes.error}>
+          {error}
+      </div>
+    }
     return(
         <Card>
-        <form className={classes.form} onSubmit={onSubmitHandler}>
+            <PromtQuotes isEntering={isEntering}>
+        <form className={classes.form} onSubmit={onSubmitHandler} onFocus={onFocusHandler}>
            <div className={classes.control}>
                <label htmlFor='author'>Author</label>
                <input id='author' type='text' ref={textInputRef}/>
@@ -40,8 +59,9 @@ const history =useHistory()
                <button type='submit'>Add Quote</button>
            </div>
         </form>
+        </PromtQuotes>
         </Card>
     )
-})
+}
 
 export default NewQuote

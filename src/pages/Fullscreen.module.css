@@ -38,3 +38,13 @@
     background-color: rgb(3, 78, 53);
     color: white;
 }
+
+.loading{
+    text-align: center;
+    margin-top: 10rem;
+}
+
+.error{
+    text-align: center;
+    margin-top: 10rem;
+}

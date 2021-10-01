@@ -1,22 +1,36 @@
 import classes from './NewComment.module.css'
 import { sendCommentsData } from '../api/api'
-import {useRef,useContext} from 'react'
-import { QuotesContext } from '../useContext/context'
+import {useRef,useEffect,Fragment} from 'react'
+import useHttp from '../useHook/useHttp'
+import {useHistory,useRouteMatch} from 'react-router'
+import LoadingSpinner from '../UI/LoadingSpinner'
+import { useCallback } from 'react/cjs/react.development'
 
 const NewComment =(props)=>{
+    const history = useHistory()
+    const match = useRouteMatch()
+    console.log(match)
+    console.log(history)
+    const {sendRequest,data,error,status} = useHttp(sendCommentsData)
     const inputRef = useRef()
-    const concatComments = useContext(QuotesContext).concatComments
-    const quotes = useContext(QuotesContext).quotes
     const submitHandler=(event)=>{
         event.preventDefault()
-        const data={
+        const sendData={
             comments:inputRef.current.value,
             quoteId:props.quoteId
         }
-       sendCommentsData(data)
-       concatComments(data)
+       sendRequest(sendData)
     }
+
+    const {addedComment} = props
+    useEffect(()=>{
+        if(status === 'success' && !error)
+        addedComment()
+    },[status,error,addedComment])
+    
+   
     return(
+        <Fragment>
        <form className={classes.form} onSubmit={submitHandler}>
            <label htmlFor='new-comment'>Your Comment</label>
            <textarea id='new-comment' type='text' rows='5' ref={inputRef}/>
@@ -24,6 +38,7 @@ const NewComment =(props)=>{
                <button type='submit'>Add Comment</button>
            </div>
        </form>
+       </Fragment>
     )
 }
 

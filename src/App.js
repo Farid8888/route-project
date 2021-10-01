@@ -4,41 +4,33 @@ import Layout from './Layout/Layout';
 import Quotes from './pages/Quotes';
 import Fullscreen from './pages/Fullscreen';
 import NewQuote from './pages/NewQuote';
-import {useContext,useEffect} from 'react'
-import {QuotesContext} from './useContext/context'
-import {fetchQuotesData} from './api/api'
+import { fetchQuotesData } from './api/api';
+import useHttp from './useHook/useHttp';
+import {useEffect} from 'react'
 
 function App() {
-  const addQuotes = useContext(QuotesContext).addQuotes
-  const check = useContext(QuotesContext).check
-  const quotes = useContext(QuotesContext).quotes
-  useEffect(()=>{
-    setTimeout(()=>{
-      fetchQuotesData().then(value=>addQuotes(value))
-    },300)
-    
-},[check])
- 
-console.log(check)
-console.log(quotes)
+  const {sendRequest,data} = useHttp(fetchQuotesData)
+useEffect(()=>{
+sendRequest()
+},[sendRequest])
+console.log(data)
   return (
     <div>
       <Layout/>
       <Switch>
       <Route path='/quotes/:quoteId'>
-            <Fullscreen />
+            <Fullscreen checkData={data}/>
           </Route>  
       <Redirect from='/' to='/quotes' exact/>
       <Route path='/quotes' exact>
-        <Quotes/>
+        <Quotes />
         </Route>
         <Route path='/new-quote'>
           <NewQuote/>
         </Route>
-      {/* <Route path='*'>
+      <Route path='*'>
         <PageNotFound/>
-      </Route> */}
-      
+      </Route>
       </Switch>
     </div>
   );

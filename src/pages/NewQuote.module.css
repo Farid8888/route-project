@@ -41,3 +41,13 @@ outline: none;
 border:2px solid teal;
 outline: none;
 }
+
+.loading{
+    text-align: center;
+    margin-top: 10rem;
+}
+
+.error{
+    text-align: center;
+    margin-top: 10rem;
+}
