@@ -1,5 +1,4 @@
 import classes from './Fullscreen.module.css'
-import { QuotesContext } from '../useContext/context'
 import {useEffect,Fragment,useState} from 'react'
 import { getFilteredQuotes } from '../api/api'
 import {useParams,Route,useRouteMatch,Link,useHistory} from 'react-router-dom'
